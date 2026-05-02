@@ -10,10 +10,7 @@ const taskRoutes = require("./routes/task");
 dotenv.config();
 
 const app = express();
-app.use(cors({
-  origin: "https://your-frontend-url.railway.app",
-  credentials: true
-}));
+app.use(cors());
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
