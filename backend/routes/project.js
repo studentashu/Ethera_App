@@ -35,4 +35,48 @@ router.get("/", verifyToken, async (req, res) => {
   res.json(projects);
 });
 
+// Update Project
+router.put("/:id", verifyToken, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json("Project not found");
+    }
+
+    // Only admin can update
+    if (req.user.role !== "admin") {
+      return res.status(403).json("Access denied");
+    }
+
+    project.name = req.body.name || project.name;
+    project.members = req.body.members || project.members;
+
+    await project.save();
+
+    res.json(project);
+  } catch (err) {
+    res.status(500).json("Error updating project");
+  }
+});
+// Delete Project
+router.delete("/:id", verifyToken, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json("Project not found");
+    }
+
+    if (req.user.role !== "admin") {
+      return res.status(403).json("Access denied");
+    }
+
+    await project.deleteOne();
+
+    res.json({ message: "Project deleted successfully" });
+  } catch (err) {
+    res.status(500).json("Error deleting project");
+  }
+});
 module.exports = router;

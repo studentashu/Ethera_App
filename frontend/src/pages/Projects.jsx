@@ -8,7 +8,7 @@ export default function Projects() {
   const [users, setUsers] = useState([]);
   const [name, setName] = useState("");
   const [selectedMembers, setSelectedMembers] = useState([]);
-
+const [editId, setEditId] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
 
   const fetchProjects = () => {
@@ -31,22 +31,53 @@ export default function Projects() {
       setSelectedMembers([...selectedMembers, id]);
     }
   };
+const handleEdit = (project) => {
+  setName(project.name);
+  setSelectedMembers(project.members.map(m => m._id));
+  setEditId(project._id);
+};
+const handleDelete = async (id) => {
+  if (!window.confirm("Delete this project?")) return;
 
-  const createProject = async () => {
-    if (!name || selectedMembers.length === 0) {
-      alert("Project name and members required");
-      return;
+  try {
+    await API.delete(`/projects/${id}`);
+    alert("Deleted successfully");
+    fetchProjects();
+  } catch (err) {
+    alert("Delete failed");
+  }
+};
+ const createProject = async () => {
+  if (!name || selectedMembers.length === 0) {
+    alert("Project name and members required");
+    return;
+  }
+
+  try {
+    if (editId) {
+      // UPDATE
+      await API.put(`/projects/${editId}`, {
+        name,
+        members: selectedMembers
+      });
+      alert("Project updated");
+    } else {
+      // CREATE
+      await API.post("/projects", {
+        name,
+        members: selectedMembers
+      });
+      alert("Project created");
     }
-
-    await API.post("/projects", {
-      name,
-      members: selectedMembers
-    });
 
     setName("");
     setSelectedMembers([]);
+    setEditId(null);
     fetchProjects();
-  };
+  } catch (err) {
+    alert("Error saving project");
+  }
+};
 
   return (
     <div style={styles.container}>
@@ -84,23 +115,33 @@ export default function Projects() {
         </label>
       ))}
     </div>
-
-    <button style={styles.button} onClick={createProject}>
-      Create Project
-    </button>
+<button style={styles.button} onClick={createProject}>
+  {editId ? "Update Project" : "Create Project"}
+</button>
   </div>
 )}
 
       {/* PROJECT LIST */}
       <div style={styles.projectList}>
         {projects.map(p => (
-          <div key={p._id} style={styles.projectCard}>
-            <h3>{p.name}</h3>
-            <p>
-              Members:{" "}
-              {p.members?.map(m => m.name).join(", ") || "No members"}
-            </p>
-          </div>
+         <div key={p._id} style={styles.projectCard}>
+  <h3>{p.name}</h3>
+  <p>
+    Members: {p.members?.map(m => m.name).join(", ") || "No members"}
+  </p>
+
+  {user.role === "admin" && (
+    <div style={{ marginTop: "10px" }}>
+      <button onClick={() => handleEdit(p)} style={styles.smallBtn}>
+        Edit
+      </button>
+
+      <button onClick={() => handleDelete(p._id)} style={styles.deleteBtn}>
+        Delete
+      </button>
+    </div>
+  )}
+</div>
         ))}
       </div>
     </div>
