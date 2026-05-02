@@ -59,30 +59,37 @@ export default function Projects() {
         navigate(-1);
       }} style={styles.card}>Back</button>
       {/* ADMIN SECTION */}
-      {user.role === "admin" && (
-        <div style={styles.card}>
-         
+    {user.role === "admin" && (
+  <div style={styles.card}>
+    
+    <input
+      type="text"
+      placeholder="Enter Project Name"
+      value={name}
+      onChange={(e) => setName(e.target.value)}
+      style={styles.input}
+    />
 
-          <h4>Select Members:</h4>
+    <h4>Select Members:</h4>
 
-          <div style={styles.memberList}>
-            {users.map(u => (
-              <label key={u._id} style={styles.memberItem}>
-                <input
-                  type="checkbox"
-                  checked={selectedMembers.includes(u._id)}
-                  onChange={() => toggleMember(u._id)}
-                />
-                {u.name}
-              </label>
-            ))}
-          </div>
+    <div style={styles.memberList}>
+      {users.map(u => (
+        <label key={u._id} style={styles.memberItem}>
+          <input
+            type="checkbox"
+            checked={selectedMembers.includes(u._id)}
+            onChange={() => toggleMember(u._id)}
+          />
+          {u.name}
+        </label>
+      ))}
+    </div>
 
-          <button style={styles.button} onClick={createProject}>
-            Create Project
-          </button>
-        </div>
-      )}
+    <button style={styles.button} onClick={createProject}>
+      Create Project
+    </button>
+  </div>
+)}
 
       {/* PROJECT LIST */}
       <div style={styles.projectList}>
