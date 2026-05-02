@@ -66,6 +66,9 @@ const updateStatus = async (id, status) => {
           <button style={styles.button} onClick={() => navigate("/tasks")}>
             Manage Tasks
           </button>
+          <button style={styles.button} onClick={() => navigate("/users")}>
+  Manage Users
+</button>
         </div>
       )}
 

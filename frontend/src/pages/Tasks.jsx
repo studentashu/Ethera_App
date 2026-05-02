@@ -3,6 +3,17 @@ import API from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 export default function Tasks() {
+  const [editId, setEditId] = useState(null);
+  const handleDelete = async (id) => {
+  if (!window.confirm("Delete this task?")) return;
+
+  try {
+    await API.delete(`/tasks/${id}`);
+    fetchTasks();
+  } catch (err) {
+    alert("Delete failed");
+  }
+};
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const [tasks, setTasks] = useState([]);
@@ -13,7 +24,13 @@ export default function Tasks() {
   const [assignedTo, setAssignedTo] = useState("");
   const [project, setProject] = useState("");
   const [dueDate, setDueDate] = useState("");
-
+const handleEdit = (task) => {
+  setTitle(task.title);
+  setAssignedTo(task.assignedTo._id || task.assignedTo);
+  setProject(task.project._id || task.project);
+  setDueDate(task.dueDate?.split("T")[0]);
+  setEditId(task._id);
+};
   const fetchTasks = () => {
     API.get("/tasks").then(res => setTasks(res.data));
   };
@@ -32,26 +49,42 @@ export default function Tasks() {
     fetchProjects();
   }, []);
 
-  const createTask = async () => {
-    if (!title || !assignedTo || !project || !dueDate) {
-      alert("All fields are required");
-      return;
-    }
+ const createTask = async () => {
+  if (!title || !assignedTo || !project || !dueDate) {
+    alert("All fields are required");
+    return;
+  }
 
-    await API.post("/tasks", {
-      title,
-      assignedTo,
-      project,
-      dueDate
-    });
+  try {
+    if (editId) {
+      await API.put(`/tasks/${editId}`, {
+        title,
+        assignedTo,
+        project,
+        dueDate
+      });
+      alert("Task updated");
+    } else {
+      await API.post("/tasks", {
+        title,
+        assignedTo,
+        project,
+        dueDate
+      });
+      alert("Task created");
+    }
 
     setTitle("");
     setAssignedTo("");
     setProject("");
     setDueDate("");
+    setEditId(null);
 
     fetchTasks();
-  };
+  } catch {
+    alert("Error saving task");
+  }
+};
 
   const updateStatus = async (id, status) => {
     await API.put(`/tasks/${id}`, { status });
@@ -116,9 +149,9 @@ export default function Tasks() {
           onChange={e => setDueDate(e.target.value)}
         />
 
-        <button style={styles.addBtn} onClick={createTask}>
-          Add Task
-        </button>
+       <button style={styles.addBtn} onClick={createTask}>
+  {editId ? "Update Task" : "Add Task"}
+</button>
       </div>
 
       {/* TASK LIST */}
@@ -144,7 +177,23 @@ export default function Tasks() {
               <p style={{ color: statusColor[t.status] }}>
                 Status: {statusMap[t.status]}
               </p>
+{user.role === "admin" && (
+  <div style={{ marginTop: "10px" }}>
+    <button
+      style={styles.smallBtn}
+      onClick={() => handleEdit(t)}
+    >
+      Edit
+    </button>
 
+    <button
+      style={styles.deleteBtn}
+      onClick={() => handleDelete(t._id)}
+    >
+      Delete
+    </button>
+  </div>
+)}
               <p>
                 Due: {t.dueDate
                   ? new Date(t.dueDate).toLocaleDateString()
@@ -236,5 +285,14 @@ const styles = {
     display: "flex",
     gap: "5px",
     marginTop: "5px"
-  }
+  },
+  deleteBtn: {
+  padding: "6px 10px",
+  marginLeft: "10px",
+  backgroundColor: "#d63031",
+  color: "white",
+  border: "none",
+  borderRadius: "5px",
+  cursor: "pointer"
+}
 };

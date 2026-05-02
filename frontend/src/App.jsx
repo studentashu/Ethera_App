@@ -6,6 +6,7 @@ import Projects from "./pages/Projects";
 import Tasks from "./pages/Tasks";
 import Home from "./pages/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Users from "./pages/Users";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
+        <Route path="/users" element={<Users/>}/>
         <Route
           path="/dashboard"
           element={

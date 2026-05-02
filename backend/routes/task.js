@@ -56,15 +56,34 @@ router.put("/:id", verifyToken, async (req, res) => {
 
   if (!task) return res.status(404).json("Task not found");
 
-  // Only assigned user can update
-  if (task.assignedTo.toString() !== req.user.id) {
+  // Allow admin OR assigned user
+  if (
+    req.user.role !== "admin" &&
+    task.assignedTo.toString() !== req.user.id
+  ) {
     return res.status(403).json("Not allowed");
   }
 
+  task.title = req.body.title || task.title;
   task.status = req.body.status || task.status;
+  task.dueDate = req.body.dueDate || task.dueDate;
+
   await task.save();
 
   res.json(task);
 });
 
+router.delete("/:id", verifyToken, async (req, res) => {
+  const task = await Task.findById(req.params.id);
+
+  if (!task) return res.status(404).json("Task not found");
+
+  if (req.user.role !== "admin") {
+    return res.status(403).json("Only admin can delete");
+  }
+
+  await task.deleteOne();
+
+  res.json({ message: "Task deleted" });
+});
 module.exports = router;
