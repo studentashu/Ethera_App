@@ -44,7 +44,6 @@ router.put("/:id", verifyToken, async (req, res) => {
       return res.status(404).json("Project not found");
     }
 
-    // Only admin can update
     if (req.user.role !== "admin") {
       return res.status(403).json("Access denied");
     }
@@ -54,7 +53,12 @@ router.put("/:id", verifyToken, async (req, res) => {
 
     await project.save();
 
-    res.json(project);
+    // ✅ IMPORTANT FIX
+    const updatedProject = await Project.findById(project._id)
+      .populate("members");
+
+    res.json(updatedProject);
+
   } catch (err) {
     res.status(500).json("Error updating project");
   }
