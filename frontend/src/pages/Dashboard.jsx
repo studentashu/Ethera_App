@@ -32,7 +32,7 @@ export default function Dashboard() {
 const updateStatus = async (id, status) => {
   try {
     await API.put(`/tasks/${id}`, { status });
-    const res = await API.get("/tasks"); // refresh
+    const res = await API.get("/tasks"); 
     setTasks(res.data);
   } catch (err) {
     alert("Failed to update status");
@@ -42,7 +42,7 @@ const updateStatus = async (id, status) => {
     <div style={styles.container}>
       <h2 style={styles.title}>Dashboard</h2>
 
-      {/* METRICS */}
+    
       <div style={styles.metrics}>
         <div style={styles.card}>Total: {total}</div>
         <div style={styles.card}>Pending: {todo}</div>

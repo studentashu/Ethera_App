@@ -55,14 +55,12 @@ const handleDelete = async (id) => {
 
   try {
     if (editId) {
-      // UPDATE
       await API.put(`/projects/${editId}`, {
         name,
         members: selectedMembers
       });
       alert("Project updated");
     } else {
-      // CREATE
       await API.post("/projects", {
         name,
         members: selectedMembers
@@ -89,7 +87,6 @@ const handleDelete = async (id) => {
       <button onClick={()=>{
         navigate(-1);
       }} style={styles.card}>Back</button>
-      {/* ADMIN SECTION */}
     {user.role === "admin" && (
   <div style={styles.card}>
     
