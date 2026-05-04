@@ -6,8 +6,6 @@ export default function ProtectedRoute({children,role }) {
   if (!token) {
     return <Navigate to="/login" />;
   }
-
-  // Role restriction (optional)
   if (role&&user?.role !==role) {
     return <Navigate to="/dashboard" />;
   }  return children;
