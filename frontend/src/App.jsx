@@ -17,13 +17,11 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/users" element={<Users/>}/>
         <Route
-          path="/dashboard"
-          element={
+          path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
-          }
-        />
+                  }    />
 
         <Route
           path="/projects"
