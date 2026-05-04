@@ -121,7 +121,6 @@ const handleDelete = async (id) => {
   </div>
 )}
 
-      {/* PROJECT LIST */}
       <div style={styles.projectList}>
         {projects.map(p => (
          <div key={p._id} style={styles.projectCard}>

@@ -4,16 +4,12 @@ const { verifyToken } = require("../middleware/auth");
 
 const router = express.Router();
 
-// Create Project (Admin only)
-// routes/project.js
 router.post("/", verifyToken, async (req, res) => {
   if (req.user.role !== "admin") {
     return res.status(403).json("Access denied");
   }
 
   const members = req.body.members || [];
-
-  // Ensure creator is included
   if (!members.includes(req.user.id)) {
     members.push(req.user.id);
   }
@@ -26,7 +22,6 @@ router.post("/", verifyToken, async (req, res) => {
 
   res.json(project);
 });
-// Get Projects
 router.get("/", verifyToken, async (req, res) => {
   const projects = await Project.find({
     members: req.user.id
@@ -35,7 +30,6 @@ router.get("/", verifyToken, async (req, res) => {
   res.json(projects);
 });
 
-// Update Project
 router.put("/:id", verifyToken, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
@@ -53,7 +47,6 @@ router.put("/:id", verifyToken, async (req, res) => {
 
     await project.save();
 
-    // ✅ IMPORTANT FIX
     const updatedProject = await Project.findById(project._id)
       .populate("members");
 
@@ -63,7 +56,6 @@ router.put("/:id", verifyToken, async (req, res) => {
     res.status(500).json("Error updating project");
   }
 });
-// Delete Project
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);

@@ -56,8 +56,6 @@ const updateStatus = async (id, status) => {
             navigate("/login");
         }}>Logout</button></div>
       </div>
-
-      {/* ADMIN CONTROLS */}
       {user.role === "admin" && (
         <div style={styles.actions}>
           <button style={styles.button} onClick={() => navigate("/projects")}>
@@ -72,7 +70,6 @@ const updateStatus = async (id, status) => {
         </div>
       )}
 
-      {/* TASK LIST */}
       <h3 style={styles.subtitle}>
         {user.role === "admin" ? "All Tasks" : "My Tasks"}
       </h3>
@@ -128,8 +125,7 @@ const updateStatus = async (id, status) => {
       Completed
     </button>
   </div>
-)}
-            </div>
+)}  </div>
           );
         })}
       </div>

@@ -5,8 +5,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { verifyToken } = require("../middleware/auth");
 const router = express.Router();
-
-
 router.get("/users", async (req, res) => {
   try {
     const users = await User.find().select("_id name email role");
@@ -15,8 +13,6 @@ router.get("/users", async (req, res) => {
     res.status(500).json(err.message);
   }
 });
-
-// GET USERS (Admin only)
 router.get("/admin/users", verifyToken, async (req, res) => {
   if (req.user.role !== "admin") {
     return res.status(403).json("Access denied");
@@ -25,8 +21,6 @@ router.get("/admin/users", verifyToken, async (req, res) => {
   const users = await User.find().select("_id name email role");
   res.json(users);
 });
-
-// DELETE USER (Admin only)
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -57,7 +51,6 @@ router.delete("/:id", verifyToken, async (req, res) => {
     res.status(500).json("Error deleting user");
   }
 });
-
 router.post("/register", async (req, res) => {
   
 

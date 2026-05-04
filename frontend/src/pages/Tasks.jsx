@@ -107,7 +107,7 @@ const handleEdit = (task) => {
     <div style={styles.container}>
       <h2 style={styles.title}>Tasks</h2>
 
-      {/* TOP ACTIONS */}
+  
       <div style={styles.topBar}>
         <button style={styles.smallBtn} onClick={() => {
           localStorage.removeItem("token");
@@ -119,7 +119,6 @@ const handleEdit = (task) => {
         </button>
       </div>
 
-      {/* FORM */}
       <div style={styles.form}>
         <input
           style={styles.input}
@@ -154,7 +153,6 @@ const handleEdit = (task) => {
 </button>
       </div>
 
-      {/* TASK LIST */}
       <div style={styles.taskList}>
         {tasks.map(t => {
           const isOverdue =
